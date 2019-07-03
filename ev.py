@@ -14,7 +14,7 @@ def ev(code):
     sets = requests.get("https://api.scryfall.com/sets/").json()
     for s in sets["data"]:
         if code.upper() == s["code"].upper():
-            return "${:.2f}".format(_ev_url(s["search_uri"]))
+            return f"${_ev_url(s["search_uri"]):.2f}"
 
 
 def _ev_url(url):
@@ -50,7 +50,7 @@ if __name__ == "main":
     )
     parser.add_argument("target", type=str)
     args = parser.parse_args()
-    
+
     if Actions(args.action) is Actions.EV:
         print(ev(args.target))
     else:
