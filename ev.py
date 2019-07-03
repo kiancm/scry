@@ -36,12 +36,12 @@ def _ev_url(url):
         return total
 
 
-def search(query, search_type=Actions.PRICE):
-    fuzzy = query.lower().replace(" ", "+")
-    if search_type is Actions.PRICE:
+def search(args):
+    fuzzy = args.query.lower().replace(" ", "+")
+    if SearchOptions(args.type) is Actions.PRICE:
         json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
-    if search_type is Actions.INFO:
         return f"{json['name']}: ${json['usd']}"
+    if SearchOptions(args.type) is Actions.INFO:
         text = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text").text
         return text
 
