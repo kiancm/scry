@@ -9,15 +9,12 @@ def ev(code):
             return "${:.2f}".format(_ev_url(s["search_uri"]))
 
 
-
 def _ev_url(url):
     multipliers = {"mythic": 0.3, "rare": 0.59, "uncommon": 1.35, "common": 0}
-    total = 0
     set_list = requests.get(url).json()
     cards = set_list["data"]
-    for card in cards:
-        if "usd" in card:
-            total += multipliers[card["rarity"]] * float(card["usd"])
+    total = sum(multipliers[card["rarity"]] * float(card["usd"]) for card in cards if "usd" in card)
+    
     if set_list["has_more"]:
         return total + _ev_url(set_list["next_page"])
     else:
