@@ -50,6 +50,7 @@ if __name__ == "main":
     )
     parser.add_argument("target", type=str)
     args = parser.parse_args()
+    
     if Actions(args.action) is Actions.EV:
         print(ev(args.target))
     else:
