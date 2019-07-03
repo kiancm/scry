@@ -1,5 +1,13 @@
+from enum import Enum
 import argparse
+
 import requests
+
+
+class Actions(Enum):
+    EV = "ev"
+    PRICE = "price"
+    INFO = "info"
 
 
 def ev(code):
@@ -14,21 +22,21 @@ def _ev_url(url):
     set_list = requests.get(url).json()
     cards = set_list["data"]
     total = sum(multipliers[card["rarity"]] * float(card["usd"]) for card in cards if "usd" in card)
-    
+
     if set_list["has_more"]:
         return total + _ev_url(set_list["next_page"])
     else:
         return total
 
 
-def search(query, search_type="price"):
+def search(query, search_type=Actions.PRICE):
     fuzzy = query.lower().replace(" ", "+")
-    if search_type == "price":
+    if search_type is Actions.PRICE:
         json = requests.get(
             "https://api.scryfall.com/cards/named?fuzzy=" + fuzzy
         ).json()
         return json["name"] + ": $" + json["usd"]
-    if search_type == "info":
+    if search_type is Actions.INFO:
         text = requests.get(
             "https://api.scryfall.com/cards/named?fuzzy=" + fuzzy + "&format=text"
         ).text
@@ -37,13 +45,10 @@ def search(query, search_type="price"):
 
 if __name__ == "main":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--action", default="ev", choices=["ev", "price", "info"])
+    parser.add_argument("--action", default=Actions.EV.value, choices=[e.value for e in Actions])
     parser.add_argument("target", type=str)
     args = parser.parse_args()
-    try:
-        if args.action == "ev":
-            print(ev(args.target))
-        else:
-            print(search(args.target, search_type=args.action))
-    except Exception as e:
-        raise e
+    if Actions(args.action) is Actions.EV:
+        print(ev(args.target))
+    else:
+        print(search(args.target, search_type=Actions(args.action)))
