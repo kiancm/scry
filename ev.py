@@ -21,7 +21,11 @@ def _ev_url(url):
     multipliers = {"mythic": 0.3, "rare": 0.59, "uncommon": 1.35, "common": 0}
     set_list = requests.get(url).json()
     cards = set_list["data"]
-    total = sum(multipliers[card["rarity"]] * float(card["usd"]) for card in cards if "usd" in card)
+    total = sum(
+        multipliers[card["rarity"]] * float(card["usd"])
+        for card in cards
+        if "usd" in card
+    )
 
     if set_list["has_more"]:
         return total + _ev_url(set_list["next_page"])
@@ -32,20 +36,18 @@ def _ev_url(url):
 def search(query, search_type=Actions.PRICE):
     fuzzy = query.lower().replace(" ", "+")
     if search_type is Actions.PRICE:
-        json = requests.get(
-            "https://api.scryfall.com/cards/named?fuzzy=" + fuzzy
-        ).json()
-        return json["name"] + ": $" + json["usd"]
+        json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
+        return f"{json["name"]}: ${json["usd"]}
     if search_type is Actions.INFO:
-        text = requests.get(
-            "https://api.scryfall.com/cards/named?fuzzy=" + fuzzy + "&format=text"
-        ).text
+        text = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text").text
         return text
 
 
 if __name__ == "main":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--action", default=Actions.EV.value, choices=[e.value for e in Actions])
+    parser.add_argument(
+        "--action", default=Actions.EV.value, choices=[e.value for e in Actions]
+    )
     parser.add_argument("target", type=str)
     args = parser.parse_args()
     if Actions(args.action) is Actions.EV:
