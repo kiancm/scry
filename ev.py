@@ -28,9 +28,6 @@ def search(query, search_type='price'):
     if search_type == 'info':
         text = requests.get('https://api.scryfall.com/cards/named?fuzzy=' + fuzzy + "&format=text").text
         return text
-    # if json['object'] != 'error':
-    #     return f[form]
-    # return ValueError(json['details'])
 
 if __name__ == 'main':
     parser = argparse.ArgumentParser()
@@ -44,23 +41,3 @@ if __name__ == 'main':
             print(search(args.target, search_type=args.action))
     except Exception as e:
         raise e
-
-
-# def func_list(args):
-#     func_args = {'ev': ev, 
-#                  'price': price,
-#                  'info'  : info}
-#     arg1 = args[0]
-#     print()
-#     for arg in args[1:]:
-#         if arg1 == 'ev':
-#             print(arg.upper() + ': ', end = '')
-#         try:
-#             if arg1 == 'ev':
-#                 print(func_args[arg1](arg))
-#             else:
-#                 print(func_args[arg1](arg) + '\n')
-#         except ValueError as e:
-#             print(str(e) + '\n')
-
-# func_list(sys.argv[1:])
