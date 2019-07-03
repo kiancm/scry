@@ -45,8 +45,7 @@ def search(args):
         text = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text").text
         return text
 
-
-if __name__ == "main":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
