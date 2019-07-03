@@ -48,13 +48,17 @@ def search(query, search_type=Actions.PRICE):
 
 if __name__ == "main":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--action", default=Actions.EV.value, choices=[e.value for e in Actions]
-    )
-    parser.add_argument("target", type=str)
+    subparsers = parser.add_subparsers()
+
+    parser_search = subparsers.add_parser("search")
+    parser_search.add_argument("type", type=str, default=SearchOptions.PRICE.value, choices=[e.value for e in SearchOptions])
+    parser_search.add_argument("query", type=str)
+    parser_search.set_defaults(func=search)
+
+    parser_ev = subparsers.add_parser("ev")
+    parser_ev.add_argument("code", type=str)
+    parser_ev.set_defaults(func=ev)
+
     args = parser.parse_args()
 
-    if Actions(args.action) is Actions.EV:
-        print(ev(args.target))
-    else:
-        print(search(args.target, search_type=Actions(args.action)))
+    print(args.func(args))
