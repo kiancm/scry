@@ -6,15 +6,18 @@ import requests
 
 class Actions(Enum):
     EV = "ev"
+    SEARCH = "search"
+
+class SearchOptions(Enum):
     PRICE = "price"
     INFO = "info"
 
 
-def ev(code):
+def ev(args):
     sets = requests.get("https://api.scryfall.com/sets/").json()
     for s in sets["data"]:
-        if code.upper() == s["code"].upper():
-            return f"${_ev_url(s["search_uri"]):.2f}"
+        if args.code.upper() == s["code"].upper():
+            return f"${_ev_url(s['search_uri']):.2f}"
 
 
 def _ev_url(url):
@@ -37,8 +40,8 @@ def search(query, search_type=Actions.PRICE):
     fuzzy = query.lower().replace(" ", "+")
     if search_type is Actions.PRICE:
         json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
-        return f"{json["name"]}: ${json["usd"]}
     if search_type is Actions.INFO:
+        return f"{json['name']}: ${json['usd']}"
         text = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text").text
         return text
 
