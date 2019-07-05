@@ -3,14 +3,20 @@ import argparse
 
 import requests
 
+from utils import Factory
+
 
 class Actions(Enum):
     EV = "ev"
     SEARCH = "search"
 
+
 class SearchOptions(Enum):
     PRICE = "price"
     INFO = "info"
+
+
+search_factory = Factory()
 
 
 def ev(args):
@@ -37,13 +43,22 @@ def _ev_url(url):
 
 
 def search(args):
-    fuzzy = args.query.lower().replace(" ", "+")
-    if SearchOptions(args.type) is Actions.PRICE:
-        json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
-        return f"{json['name']}: ${json['usd']}"
-    if SearchOptions(args.type) is Actions.INFO:
-        text = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text").text
-        return text
+    return search_factory[args.type](args.query)
+
+
+@search_factory.register
+def price(query):
+    fuzzy = query.lower().replace(" ", "+")
+    json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
+    return f"{json['name']}: ${json['prices']['usd']}"
+
+
+@search_factory.register
+def info(query):
+    text = requests.get(
+        f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text"
+    ).text
+    return text
 
 
 if __name__ == "__main__":
@@ -51,7 +66,9 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers()
 
     parser_search = subparsers.add_parser("search")
-    parser_search.add_argument("type", type=str, default=SearchOptions.PRICE.value, choices=[e.value for e in SearchOptions])
+    parser_search.add_argument(
+        "type", type=str, choices=search_factory._builders.keys()
+    )
     parser_search.add_argument("query", type=str)
     parser_search.set_defaults(func=search)
 
