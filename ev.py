@@ -25,9 +25,9 @@ def _ev_url(url):
     set_list = requests.get(url).json()
     cards = set_list["data"]
     total = sum(
-        multipliers[card["rarity"]] * float(card["usd"])
+        multipliers[card["rarity"]] * float(card["prices"]["usd"])
         for card in cards
-        if "usd" in card
+        if "usd" in card["prices"]
     )
 
     if set_list["has_more"]:
