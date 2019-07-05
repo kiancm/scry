@@ -55,6 +55,7 @@ def price(query):
 
 @search_factory
 def info(query):
+    fuzzy = query.lower().replace(" ", "+")
     text = requests.get(
         f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text"
     ).text
