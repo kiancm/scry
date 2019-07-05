@@ -23,13 +23,23 @@ def _ev_url(url):
     total = sum(
         multipliers[card["rarity"]] * float(card["prices"]["usd"])
         for card in cards
-        if "usd" in card["prices"]
+        if safe(card)
     )
 
     if set_list["has_more"]:
         return total + _ev_url(set_list["next_page"])
 
     return total
+
+
+def safe(card):
+    return (
+        card
+        and "prices" in card
+        and card["prices"]
+        and "usd" in card["prices"]
+        and card["prices"]["usd"]
+    )
 
 
 def search(args):
