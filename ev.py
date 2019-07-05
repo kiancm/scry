@@ -46,14 +46,14 @@ def search(args):
     return search_factory[args.type](args.query)
 
 
-@search_factory.register
+@search_factory
 def price(query):
     fuzzy = query.lower().replace(" ", "+")
     json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
     return f"{json['name']}: ${json['prices']['usd']}"
 
 
-@search_factory.register
+@search_factory
 def info(query):
     text = requests.get(
         f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text"

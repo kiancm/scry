@@ -2,7 +2,7 @@ class Factory:
     def __init__(self):
         self._builders = {}
 
-    def register(self, func, name=None):
+    def __call__(self, func, name=None):
         self._builders[name or func.__name__] = func
         return func
 
