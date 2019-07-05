@@ -28,8 +28,8 @@ def _ev_url(url):
 
     if set_list["has_more"]:
         return total + _ev_url(set_list["next_page"])
-    else:
-        return total
+
+    return total
 
 
 def search(args):
