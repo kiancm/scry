@@ -6,16 +6,6 @@ import requests
 from utils import Factory
 
 
-class Actions(Enum):
-    EV = "ev"
-    SEARCH = "search"
-
-
-class SearchOptions(Enum):
-    PRICE = "price"
-    INFO = "info"
-
-
 search_factory = Factory()
 
 
