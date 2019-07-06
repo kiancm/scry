@@ -96,7 +96,4 @@ def main():
 
     args = parser.parse_args()
 
-    if len(sys.argv) > 1:
-        print(args.func(args))
-    else:
-        parser.print_help()
+    print(args.func(args))
