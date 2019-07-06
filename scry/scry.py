@@ -12,12 +12,14 @@ search_factory = Factory()
 
 def ev(args):
     sets = requests.get("https://api.scryfall.com/sets/").json()
-    for s in sets["data"]:
-        code = s["code"]
-        name = s["name"]
-        url = s["url"]
-        if args.code.upper() == code.upper():
-            return f"{name}({code.upper()}): ${_ev_url(url):.2f}"
+    results = [
+        f"{s['name']}({s['code'].upper()}): ${_ev_url(s['search_uri']):.2f}"
+        for acode in args.codes
+        for s in sets["data"]
+        if acode.upper() == s["code"].upper()
+    ]
+
+    return "\n".join(results)
 
 
 def _ev_url(url):
@@ -56,8 +58,10 @@ def price(query):
     json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
     return f"{json['name']}: ${json['prices']['usd']}"
 
+
 def card_border(line, length):
     return f"|{line}{(length - len(line)) *  ' '}|\n"
+
 
 @search_factory
 def info(query):
@@ -67,8 +71,8 @@ def info(query):
     ).text
     lines = text.strip().splitlines()
     border_len = max(len(line) for line in lines)
-    outline =  f"|{'-' * border_len}|\n"
-    output_lines = [card_border(line, border_len) for line in lines] 
+    outline = f"|{'-' * border_len}|\n"
+    output_lines = [card_border(line, border_len) for line in lines]
     rules = "".join(output_lines[2:])
     output = outline.join([*output_lines[:2], rules])
 
@@ -87,7 +91,7 @@ def main():
     parser_search.set_defaults(func=search)
 
     parser_ev = subparsers.add_parser("ev")
-    parser_ev.add_argument("code", type=str)
+    parser_ev.add_argument("codes", type=str, nargs="+")
     parser_ev.set_defaults(func=ev)
 
     args = parser.parse_args()
