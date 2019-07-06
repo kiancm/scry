@@ -1,3 +1,4 @@
+import sys
 import argparse
 from enum import Enum
 
@@ -88,4 +89,7 @@ def main():
 
     args = parser.parse_args()
 
-    print(args.func(args))
+    if len(sys.argv) > 1:
+        print(args.func(args))
+    else:
+        parser.print_help()
