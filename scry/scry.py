@@ -1,9 +1,9 @@
-from enum import Enum
 import argparse
+from enum import Enum
 
 import requests
 
-from utils import Factory
+from .utils import Factory
 
 
 search_factory = Factory()
@@ -71,7 +71,7 @@ def info(query):
     return f"+{'-' * border_len}+\n{output}+{'-' * border_len}+"
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
