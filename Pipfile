@@ -6,9 +6,11 @@ verify_ssl = true
 [dev-packages]
 black = "*"
 flake8 = "*"
+setuptools = "*"
 
 [packages]
 requests = "*"
+scry = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
