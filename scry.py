@@ -52,6 +52,8 @@ def price(query):
     json = requests.get(f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}").json()
     return f"{json['name']}: ${json['prices']['usd']}"
 
+def card_border(line, length):
+    return f"|{line}{(length - len(line)) *  ' '}|\n"
 
 @search_factory
 def info(query):
@@ -59,7 +61,14 @@ def info(query):
     text = requests.get(
         f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text"
     ).text
-    return text
+    lines = text.strip().splitlines()
+    border_len = max(len(line) for line in lines)
+    outline =  f"|{'-' * border_len}|\n"
+    output_lines = [card_border(line, border_len) for line in lines] 
+    rules = "".join(output_lines[2:])
+    output = outline.join([*output_lines[:2], rules])
+
+    return f"+{'-' * border_len}+\n{output}+{'-' * border_len}+"
 
 
 if __name__ == "__main__":
