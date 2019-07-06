@@ -13,8 +13,10 @@ search_factory = Factory()
 def ev(args):
     sets = requests.get("https://api.scryfall.com/sets/").json()
     for s in sets["data"]:
-        if args.code.upper() == s["code"].upper():
-            return f"${_ev_url(s['search_uri']):.2f}"
+        code = s["code"]
+        url = s["url"]
+        if args.code.upper() == code.upper():
+            return f"${_ev_url(url):.2f}"
 
 
 def _ev_url(url):
