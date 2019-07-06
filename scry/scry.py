@@ -14,9 +14,10 @@ def ev(args):
     sets = requests.get("https://api.scryfall.com/sets/").json()
     for s in sets["data"]:
         code = s["code"]
+        name = s["name"]
         url = s["url"]
         if args.code.upper() == code.upper():
-            return f"${_ev_url(url):.2f}"
+            return f"{name}({code.upper()}): ${_ev_url(url):.2f}"
 
 
 def _ev_url(url):
