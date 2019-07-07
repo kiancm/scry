@@ -70,11 +70,15 @@ def info(query):
         f"https://api.scryfall.com/cards/named?fuzzy={fuzzy}&format=text"
     ).text
     lines = text.strip().splitlines()
-    border_len = max(len(line) for line in lines)
+    split_lines = [[split + "." for split in line.split(".") if split] if len(line) > 150 else [line] for line in lines]
+    flat_lines = [fline.strip() for sline in split_lines for fline in sline if fline]
+    border_len = max(len(line) for line in flat_lines)
     outline = f"|{'-' * border_len}|\n"
-    output_lines = [card_border(line, border_len) for line in lines]
+    output_lines = [card_border(line, border_len) for line in flat_lines]
     rules = "".join(output_lines[2:])
     output = outline.join([*output_lines[:2], rules])
+
+    import pdb; pdb.set_trace()
 
     return f"+{'-' * border_len}+\n{output}+{'-' * border_len}+"
 
